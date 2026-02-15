@@ -2,7 +2,7 @@ use crate::api;
 use crate::capture::coord::{normalize_bbox, normalize_point, RawPoint};
 use crate::exports::{tutorial_pack, verify};
 use crate::policy::export_gate::{
-    ensure_generated_blocks_have_evidence, tutorial_pack_gate, ExportGateInput,
+    ensure_generated_blocks_have_evidence, proof_bundle_gate, tutorial_pack_gate, ExportGateInput,
 };
 use crate::storage::{asset_store, db::Storage, event_store, gc};
 use crate::util::canon_json::to_canonical_json;
@@ -337,6 +337,36 @@ fn phase1_event_references_existing_asset_row() {
         .expect("asset count");
     assert_eq!(exists, 1);
     std::env::remove_var("OPSCINEMA_ASSUME_PERMISSIONS");
+}
+
+#[test]
+fn phase11_storage_migration_creates_required_tables() {
+    let storage = Storage::open_in_memory().expect("storage");
+    let conn = storage.conn().expect("conn");
+    for table in [
+        "sessions",
+        "events",
+        "assets",
+        "jobs",
+        "ocr_blocks",
+        "steps_snapshot",
+        "anchors_snapshot",
+        "verifiers",
+        "verifier_runs",
+        "exports",
+        "models",
+        "model_roles",
+        "benchmarks",
+    ] {
+        let exists: i64 = conn
+            .query_row(
+                "SELECT COUNT(1) FROM sqlite_master WHERE type='table' AND name=?1",
+                rusqlite::params![table],
+                |r| r.get(0),
+            )
+            .expect("table query");
+        assert_eq!(exists, 1, "missing table: {table}");
+    }
 }
 
 #[test]
@@ -740,6 +770,34 @@ fn phase7_tutorial_strict_gate_blocks_warnings() {
         }],
     };
     let err = tutorial_pack_gate(&input).expect_err("must fail");
+    assert_eq!(err.code, AppErrorCode::ExportGateFailed);
+}
+
+#[test]
+fn phase7_tutorial_strict_gate_blocks_missing_evidence_and_degraded_anchors() {
+    let input = ExportGateInput {
+        steps: vec![],
+        missing_evidence: vec!["step-1".to_string()],
+        degraded_anchor_ids: vec!["anchor-1".to_string()],
+        warnings: vec![],
+    };
+    let err = tutorial_pack_gate(&input).expect_err("must fail");
+    assert_eq!(err.code, AppErrorCode::ExportGateFailed);
+    assert!(err
+        .details
+        .unwrap_or_default()
+        .contains("missing_evidence=1"));
+}
+
+#[test]
+fn phase8_proof_bundle_gate_blocks_missing_evidence_even_without_warnings() {
+    let input = ExportGateInput {
+        steps: vec![],
+        missing_evidence: vec!["step-1".to_string()],
+        degraded_anchor_ids: vec![],
+        warnings: vec![],
+    };
+    let err = proof_bundle_gate(&input).expect_err("must fail");
     assert_eq!(err.code, AppErrorCode::ExportGateFailed);
 }
 
