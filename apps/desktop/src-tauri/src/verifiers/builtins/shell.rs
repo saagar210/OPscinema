@@ -81,10 +81,7 @@ fn is_destructive_arg(arg: &str) -> bool {
 }
 
 fn has_destructive_flag(arg: &str) -> bool {
-    arg.starts_with('-')
-        && arg.len() > 2
-        && arg.contains('r')
-        && arg.contains('f')
+    arg.starts_with('-') && arg.len() > 2 && arg.contains('r') && arg.contains('f')
 }
 
 #[cfg(test)]

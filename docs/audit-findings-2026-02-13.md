@@ -60,6 +60,21 @@
 1. Keep optional soak run in release cadence (manual `make soak` or workflow_dispatch `run_soak=true`).
 2. If expected fixture hashes are intentionally updated, require explicit acceptance flag and rerun verification without flag.
 
+## Closeout Update (2026-02-15)
+- Release hardening command path added:
+  - `make release-hardening`
+  - `make release-final`
+- Packaging path validation added (`make package`) plus optional bundle artifact workflow.
+- Additional verification coverage added for:
+  - export verifier warning policy behavior (tutorial vs proof)
+  - bundle hash mismatch detection
+  - allowlist normalization and shell verifier destructive flag blocks
+  - storage migration required-table bootstrap
+
+Residual risks after closeout:
+1. Full app/dmg bundle output depends on `cargo tauri` availability and macOS signing/notarization prerequisites in the execution environment.
+2. Long-duration soak duration remains a release decision (`SOAK_SECS`) and should be increased for high-risk releases.
+
 ## Verification Commands Executed
 From:
 - `/Users/d/Projects/OPscinema/.github/workflows/ci.yml`
@@ -72,5 +87,7 @@ From:
 4. `npm --prefix apps/desktop/ui run test`
 5. `cargo check -p opscinema_desktop_backend --features runtime`
 6. `cargo test -p opscinema_desktop_backend phase11_fixture_ -- --nocapture`
+7. `make package`
+8. `make bundle-verify-smoke`
 
 All commands passed in this audit cycle.
