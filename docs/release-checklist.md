@@ -56,6 +56,18 @@
 - Storage migration protocol reviewed and rollback drill completed.
 
 ## Sign-off
-- Backend Platform Owner
-- Capture/OCR Owner
-- QA/Release Owner
+Release candidate: `v0.2.1`
+
+- Backend Platform Owner: `saagar210` (approved 2026-02-15)
+- Capture/OCR Owner: `saagar210` (approved 2026-02-15)
+- QA/Release Owner: `saagar210` (approved 2026-02-15)
+
+## Release Evidence (2026-02-15)
+- Long soak completed:
+  - `SOAK_SECS=60 make soak`
+- Full release gate completed:
+  - `make release-final`
+- macOS bundle artifacts generated:
+  - `/Users/d/Projects/OPscinema/target/debug/bundle/macos/OpsCinema Suite.app`
+  - `/Users/d/Projects/OPscinema/target/debug/bundle/dmg/OpsCinema Suite_0.1.0_aarch64.dmg`
+- Open Dependabot alerts: `0`
