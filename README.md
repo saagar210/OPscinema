@@ -36,3 +36,4 @@ Use the backend export verifier for generated bundles:
 - `make bundle-verify-smoke` for targeted tutorial/proof/runbook regression checks.
 
 For release details, see `/Users/d/Projects/OPscinema/docs/release-checklist.md`.
+For full release + notarization operations, see `/Users/d/Projects/OPscinema/docs/RELEASE_PROCESS.md`.

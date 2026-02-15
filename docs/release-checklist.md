@@ -71,3 +71,6 @@ Release candidate: `v0.2.1`
   - `/Users/d/Projects/OPscinema/target/debug/bundle/macos/OpsCinema Suite.app`
   - `/Users/d/Projects/OPscinema/target/debug/bundle/dmg/OpsCinema Suite_0.1.0_aarch64.dmg`
 - Open Dependabot alerts: `0`
+- Notarization automation added:
+  - `/Users/d/Projects/OPscinema/.github/workflows/notarize.yml`
+  - see `/Users/d/Projects/OPscinema/docs/RELEASE_PROCESS.md`
