@@ -43,6 +43,17 @@
 - Revert to previous tagged release.
 - Keep asset store and event DB read-only during rollback verification.
 - Re-run fixture verification against rolled-back build.
+- Run rollback drill on backup copy before production release:
+  - `make verify`
+  - `make bundle-verify-smoke`
+  - `cargo test -p opscinema_desktop_backend phase11_fixture_ -- --nocapture`
+
+## Definition of Done
+- `make release-final` passes locally.
+- Fixture hashes are unchanged (or updated only with explicit acceptance intent).
+- Tutorial strict gate blocks degraded anchors, missing evidence, and warnings.
+- Export verifier smoke checks pass for tutorial/proof/runbook paths.
+- Storage migration protocol reviewed and rollback drill completed.
 
 ## Sign-off
 - Backend Platform Owner

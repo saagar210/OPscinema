@@ -40,7 +40,11 @@ fn git_commit_short() -> Option<String> {
         return None;
     }
     let value = String::from_utf8_lossy(&output.stdout).trim().to_string();
-    if value.is_empty() { None } else { Some(value) }
+    if value.is_empty() {
+        None
+    } else {
+        Some(value)
+    }
 }
 
 fn build_timestamp_utc() -> String {
