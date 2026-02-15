@@ -10,6 +10,10 @@ on:
         description: "Run optional capture soak test"
         required: false
         default: "false"
+      soak_secs:
+        description: "Soak duration in seconds when run_soak=true"
+        required: false
+        default: "30"
 
 jobs:
   checks:
@@ -49,5 +53,5 @@ jobs:
           OPSCINEMA_ASSUME_PERMISSIONS: "1"
           OPSCINEMA_PROVIDER_MODE: "stub"
           OPSCINEMA_CAPTURE_BURST_FRAMES: "0"
-          OPSCINEMA_SOAK_SECS: "30"
+          OPSCINEMA_SOAK_SECS: ${{ inputs.soak_secs }}
         run: cargo test -p opscinema_desktop_backend phase11_capture_soak_stream_consistency -- --ignored --nocapture

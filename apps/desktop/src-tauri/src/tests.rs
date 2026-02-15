@@ -1713,6 +1713,109 @@ fn phase11_export_verify_fails_policy_attestation_mismatch() {
 }
 
 #[test]
+fn phase11_export_verify_allows_proof_warnings() {
+    let out_dir = std::env::temp_dir().join(format!("opscinema-proof-warn-{}", Uuid::new_v4()));
+    std::fs::create_dir_all(&out_dir).expect("mkdir");
+    std::fs::write(out_dir.join("proof.json"), b"{}").expect("write proof");
+
+    let manifest = crate::exports::manifest::build_manifest(
+        &out_dir,
+        BundleType::ProofBundle,
+        "session-proof",
+        vec![opscinema_export_manifest::ManifestWarning {
+            code: "VERIFIER_WARN".to_string(),
+            message: "warning allowed for proof bundle".to_string(),
+        }],
+        PolicyAttestations {
+            evidence_coverage_passed: true,
+            tutorial_strict_passed: false,
+            offline_policy_enforced: true,
+        },
+        vec![],
+    )
+    .expect("manifest");
+    std::fs::write(
+        out_dir.join("manifest.json"),
+        to_canonical_json(&manifest).expect("canon"),
+    )
+    .expect("write manifest");
+
+    let result = verify::verify_bundle(&out_dir).expect("verify");
+    assert!(result.valid, "proof warnings should be allowed");
+    assert!(result.issues.is_empty());
+}
+
+#[test]
+fn phase11_export_verify_rejects_tutorial_warnings() {
+    let out_dir = std::env::temp_dir().join(format!("opscinema-tutorial-warn-{}", Uuid::new_v4()));
+    std::fs::create_dir_all(&out_dir).expect("mkdir");
+    std::fs::write(out_dir.join("tutorial.json"), b"{}").expect("write tutorial");
+
+    let manifest = crate::exports::manifest::build_manifest(
+        &out_dir,
+        BundleType::TutorialPack,
+        "session-tutorial",
+        vec![opscinema_export_manifest::ManifestWarning {
+            code: "WARN".to_string(),
+            message: "tutorial warning".to_string(),
+        }],
+        PolicyAttestations {
+            evidence_coverage_passed: true,
+            tutorial_strict_passed: true,
+            offline_policy_enforced: true,
+        },
+        vec![],
+    )
+    .expect("manifest");
+    std::fs::write(
+        out_dir.join("manifest.json"),
+        to_canonical_json(&manifest).expect("canon"),
+    )
+    .expect("write manifest");
+
+    let result = verify::verify_bundle(&out_dir).expect("verify");
+    assert!(!result.valid);
+    assert!(result
+        .issues
+        .iter()
+        .any(|issue| issue.contains("tutorial bundle contains warnings")));
+}
+
+#[test]
+fn phase11_export_verify_detects_bundle_hash_mismatch() {
+    let out_dir = std::env::temp_dir().join(format!("opscinema-hash-mismatch-{}", Uuid::new_v4()));
+    std::fs::create_dir_all(&out_dir).expect("mkdir");
+    std::fs::write(out_dir.join("tutorial.json"), b"{}").expect("write tutorial");
+
+    let mut manifest = crate::exports::manifest::build_manifest(
+        &out_dir,
+        BundleType::TutorialPack,
+        "session-hash",
+        vec![],
+        PolicyAttestations {
+            evidence_coverage_passed: true,
+            tutorial_strict_passed: true,
+            offline_policy_enforced: true,
+        },
+        vec![],
+    )
+    .expect("manifest");
+    manifest.bundle_hash = "deadbeef".to_string();
+    std::fs::write(
+        out_dir.join("manifest.json"),
+        to_canonical_json(&manifest).expect("canon"),
+    )
+    .expect("write manifest");
+
+    let result = verify::verify_bundle(&out_dir).expect("verify");
+    assert!(!result.valid);
+    assert!(result
+        .issues
+        .iter()
+        .any(|issue| issue.contains("bundle_hash mismatch")));
+}
+
+#[test]
 fn phase10_agent_pipeline_is_explicit_and_event_sourced() {
     let storage = Storage::open_in_memory().expect("storage");
     let backend = api::Backend::new(storage);
