@@ -72,8 +72,17 @@
   - storage migration required-table bootstrap
 
 Residual risks after closeout:
-1. Full app/dmg bundle output depends on `cargo tauri` availability and macOS signing/notarization prerequisites in the execution environment.
+1. macOS code signing and notarization remain environment- and credential-dependent; release artifacts are buildable but notarization must be completed in a signing-capable pipeline.
 2. Long-duration soak duration remains a release decision (`SOAK_SECS`) and should be increased for high-risk releases.
+
+## Final Risk Closeout (2026-02-15)
+- Addressed follow-up: long-duration soak run executed with `SOAK_SECS=60`.
+- Addressed follow-up: app/dmg bundle generation validated using `make package-bundle`.
+- Addressed follow-up: open Dependabot alert closed with rationale:
+  - `glib` advisory GHSA-wrw7-89jp-8q8g is present only in Linux GTK/WebKit dependency graph (`cargo tree --target all`) and absent from macOS runtime graph.
+  - Alert dismissed as `not_used` for this macOS-only release line.
+- Remaining release dependency:
+  - notarization/signing credentials and pipeline integration (operational prerequisite, not code defect).
 
 ## Verification Commands Executed
 From:
