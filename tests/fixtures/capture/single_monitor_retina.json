@@ -1,0 +1,7 @@
+{
+  "name": "single_monitor_retina",
+  "width": 3024.0,
+  "height": 1964.0,
+  "point": { "x": 1512.0, "y": 982.0 },
+  "expected": { "x": 5000, "y": 5000 }
+}

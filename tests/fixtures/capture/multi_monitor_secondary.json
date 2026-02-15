@@ -1,0 +1,7 @@
+{
+  "name": "multi_monitor_secondary",
+  "width": 2560.0,
+  "height": 1440.0,
+  "point": { "x": 1280.0, "y": 720.0 },
+  "expected": { "x": 5000, "y": 5000 }
+}

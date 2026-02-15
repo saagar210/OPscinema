@@ -1,0 +1,11 @@
+{
+  "name": "anchor_drift_auto_reacquire",
+  "session": "fixture-anchor-auto",
+  "steps": ["open target screen"],
+  "anchors": [
+    {
+      "anchor_id": "00000000-0000-0000-0000-000000000101",
+      "state": "degraded_then_auto_reacquired"
+    }
+  ]
+}

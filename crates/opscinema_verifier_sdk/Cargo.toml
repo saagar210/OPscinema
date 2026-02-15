@@ -1,0 +1,8 @@
+[package]
+name = "opscinema_verifier_sdk"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+schemars.workspace = true
+serde.workspace = true
