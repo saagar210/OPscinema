@@ -5,10 +5,14 @@
   "identifier": "com.opscinema.desktop",
   "build": {
     "frontendDist": "../ui/dist",
-    "beforeBuildCommand": "npm --prefix ../ui run build"
+    "beforeBuildCommand": "npm --prefix ./ui run build"
   },
   "bundle": {
-    "active": false
+    "active": true,
+    "targets": [
+      "app",
+      "dmg"
+    ]
   },
   "app": {
     "windows": [

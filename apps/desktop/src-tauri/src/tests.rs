@@ -94,6 +94,8 @@ fn phase0_runtime_smoke_build_info_and_session_roundtrip() {
     let build = crate::api::app::app_get_build_info().expect("build info");
     assert!(!build.app_name.is_empty());
     assert!(!build.app_version.is_empty());
+    assert!(!build.commit.is_empty());
+    assert!(build.built_at.timestamp() >= 0);
 
     let storage = Storage::open_in_memory().expect("storage");
     let backend = api::Backend::new(storage);
