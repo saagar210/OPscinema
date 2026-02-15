@@ -32,7 +32,7 @@ package:
 	npm --prefix apps/desktop/ui run build
 	@if cargo tauri --help >/dev/null 2>&1; then \
 		echo "Running tauri build path validation (--no-bundle)"; \
-		cd apps/desktop/src-tauri && cargo tauri build --debug --no-bundle; \
+		cd apps/desktop/src-tauri && cargo tauri build --debug --features runtime --no-bundle; \
 	elif [ "$(OPSCINEMA_REQUIRE_TAURI_PACKAGE)" = "1" ]; then \
 		echo "cargo tauri CLI unavailable; install tauri-cli or unset OPSCINEMA_REQUIRE_TAURI_PACKAGE"; \
 		exit 1; \
@@ -44,7 +44,7 @@ package:
 package-bundle:
 	npm --prefix apps/desktop/ui run build
 	@if cargo tauri --help >/dev/null 2>&1; then \
-		cd apps/desktop/src-tauri && cargo tauri build --debug --bundles $(OPSCINEMA_TAURI_BUNDLES); \
+		cd apps/desktop/src-tauri && cargo tauri build --debug --features runtime --bundles $(OPSCINEMA_TAURI_BUNDLES); \
 	else \
 		echo "cargo tauri CLI unavailable for bundle build"; \
 		exit 1; \
