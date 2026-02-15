@@ -2,15 +2,19 @@
 
 ## Preflight
 - Preferred one-command path:
-  - `make verify`
+  - `make release-hardening`
+- Full release gate (includes export verification smoke):
+  - `make release-final`
 - Ensure `cargo fmt --all -- --check` passes.
 - Ensure `cargo clippy --workspace --all-targets -- -D warnings` passes.
 - Ensure `cargo test --workspace` passes.
+- Ensure `make package` passes (tauri build path check).
 - Confirm fixture hash regression test is stable.
 - Confirm TutorialPack strict gate blocks degraded/warning/missing-evidence outputs.
-- Optional soak validation (manual or workflow_dispatch):
+- Soak validation:
   - `make soak`
-  - `OPSCINEMA_SOAK_SECS=30 cargo test -p opscinema_desktop_backend phase11_capture_soak_stream_consistency -- --ignored --nocapture`
+  - `SOAK_SECS=60 make soak` (longer manual release cadence run)
+  - CI `workflow_dispatch`: set `run_soak=true` and `soak_secs=<N>`
 
 ## Contract Locks
 - IPC command set unchanged from Phase 0 lock.
@@ -26,6 +30,7 @@
 - CI fixture stability mode enabled (`OPSCINEMA_DETERMINISTIC_IDS=1`, `OPSCINEMA_CAPTURE_BURST_FRAMES=1`).
 
 ## Artifact Validation
+- `make bundle-verify-smoke` to run targeted tutorial/proof/runbook export-verify smoke tests.
 - Run `export_verify_bundle` on tutorial/proof/runbook samples.
 - Verify manifest hash and bundle hash recompute successfully.
 - Verify generated text blocks include evidence refs.
