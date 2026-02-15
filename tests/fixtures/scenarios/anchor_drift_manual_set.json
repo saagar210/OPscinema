@@ -1,0 +1,11 @@
+{
+  "name": "anchor_drift_manual_set",
+  "session": "fixture-anchor-manual",
+  "steps": ["open target screen"],
+  "anchors": [
+    {
+      "anchor_id": "00000000-0000-0000-0000-000000000102",
+      "state": "degraded_then_manual_set"
+    }
+  ]
+}

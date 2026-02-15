@@ -1,0 +1,27 @@
+{
+  "name": "opscinema-ui",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "guard:typed-ipc": "node ./scripts/check-typed-ipc.mjs",
+    "test:integration": "tsx ./scripts/integration-flow.ts",
+    "test": "npm run typecheck && npm run guard:typed-ipc && npm run test:integration"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.4",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vite": "^6.1.0"
+  }
+}

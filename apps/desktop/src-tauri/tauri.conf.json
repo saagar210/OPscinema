@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "OpsCinema Suite",
+  "version": "0.1.0",
+  "identifier": "com.opscinema.desktop",
+  "build": {
+    "frontendDist": "../ui/dist",
+    "beforeBuildCommand": "npm --prefix ../ui run build"
+  },
+  "bundle": {
+    "active": false
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "OpsCinema Suite",
+        "width": 1280,
+        "height": 800,
+        "resizable": true
+      }
+    ]
+  }
+}

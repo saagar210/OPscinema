@@ -1,0 +1,111 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "StepModel",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "steps"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0.0
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Step"
+      }
+    }
+  },
+  "definitions": {
+    "Step": {
+      "type": "object",
+      "required": [
+        "body",
+        "order_index",
+        "risk_tags",
+        "step_id",
+        "title"
+      ],
+      "properties": {
+        "body": {
+          "$ref": "#/definitions/StructuredText"
+        },
+        "branch_label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "order_index": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0.0
+        },
+        "risk_tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "step_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "StructuredText": {
+      "type": "object",
+      "required": [
+        "blocks"
+      ],
+      "properties": {
+        "blocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TextBlock"
+          }
+        }
+      }
+    },
+    "TextBlock": {
+      "type": "object",
+      "required": [
+        "block_id",
+        "evidence_refs",
+        "provenance",
+        "text"
+      ],
+      "properties": {
+        "block_id": {
+          "type": "string"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "provenance": {
+          "$ref": "#/definitions/TextBlockProvenance"
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "TextBlockProvenance": {
+      "type": "string",
+      "enum": [
+        "human",
+        "generated"
+      ]
+    }
+  }
+}

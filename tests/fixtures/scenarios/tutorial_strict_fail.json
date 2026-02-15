@@ -1,0 +1,8 @@
+{
+  "name": "tutorial_strict_fail",
+  "session": "fixture-tutorial-strict-fail",
+  "expected_failures": [
+    "missing_evidence",
+    "degraded_anchor"
+  ]
+}

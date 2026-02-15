@@ -1,0 +1,10 @@
+{
+  "name": "verifier_warning_case",
+  "session": "fixture-verifier-warning",
+  "warnings": [
+    {
+      "code": "VERIFIER_WARN",
+      "message": "non-blocking verifier warning"
+    }
+  ]
+}

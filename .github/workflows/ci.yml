@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      run_soak:
+        description: "Run optional capture soak test"
+        required: false
+        default: "false"
+
+jobs:
+  checks:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install UI deps
+        run: npm --prefix apps/desktop/ui ci
+      - name: Format
+        run: cargo fmt --all -- --check
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: Runtime feature compile
+        run: cargo check -p opscinema_desktop_backend --features runtime
+      - name: UI typed checks
+        run: npm --prefix apps/desktop/ui run test
+      - name: Tests
+        run: cargo test --workspace
+      - name: Fixture Matrix Regression
+        run: cargo test -p opscinema_desktop_backend phase11_fixture_ -- --nocapture
+
+  soak:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_soak == 'true' }}
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Capture Soak Test (Optional)
+        env:
+          OPSCINEMA_ASSUME_PERMISSIONS: "1"
+          OPSCINEMA_PROVIDER_MODE: "stub"
+          OPSCINEMA_CAPTURE_BURST_FRAMES: "0"
+          OPSCINEMA_SOAK_SECS: "30"
+        run: cargo test -p opscinema_desktop_backend phase11_capture_soak_stream_consistency -- --ignored --nocapture

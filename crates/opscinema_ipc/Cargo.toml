@@ -1,0 +1,11 @@
+[package]
+name = "opscinema_ipc"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+opscinema_types = { path = "../opscinema_types" }
+serde_json.workspace = true
+
+[dev-dependencies]
+tempfile = "3"
