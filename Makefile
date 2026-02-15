@@ -2,7 +2,7 @@ SOAK_SECS ?= 30
 OPSCINEMA_REQUIRE_TAURI_PACKAGE ?= 0
 OPSCINEMA_TAURI_BUNDLES ?= app,dmg
 
-.PHONY: fmt clippy test ui-test runtime-check fixture-regression soak verify package package-bundle bundle-verify-smoke release-hardening release-preflight release-final check
+.PHONY: fmt clippy test ui-test ui-dist runtime-check fixture-regression soak verify package package-bundle bundle-verify-smoke clean-local release-hardening release-preflight release-final check
 
 fmt:
 	cargo fmt --all -- --check
@@ -16,7 +16,15 @@ test:
 ui-test:
 	npm --prefix apps/desktop/ui run test
 
-runtime-check:
+ui-dist:
+	@if [ -d apps/desktop/ui/dist ]; then \
+		echo "UI dist exists; skipping build"; \
+	else \
+		echo "UI dist missing; building"; \
+		npm --prefix apps/desktop/ui run build; \
+	fi
+
+runtime-check: ui-dist
 	cargo check -p opscinema_desktop_backend --features runtime
 
 fixture-regression:
@@ -54,6 +62,11 @@ bundle-verify-smoke:
 	cargo test -p opscinema_desktop_backend phase11_fixture_pipeline_export_verify_and_hash_regression -- --nocapture
 	cargo test -p opscinema_desktop_backend phase8_runbook_is_replayed_and_export_is_listed -- --nocapture
 	cargo test -p opscinema_desktop_backend phase8_proof_and_runbook_exports_include_verifier_warnings -- --nocapture
+
+clean-local:
+	rm -rf target
+	rm -rf apps/desktop/ui/node_modules
+	find . -path './.git' -prune -o -name '.DS_Store' -type f -delete
 
 release-hardening: verify soak package
 
