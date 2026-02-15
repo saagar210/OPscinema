@@ -29,5 +29,13 @@ This protocol governs schema changes under `/Users/d/Projects/OPscinema/apps/des
 ## Pre-merge Checklist
 - Add migration SQL file.
 - Add migration test coverage for new schema objects.
+- Confirm required base tables exist after migration bootstrap (`phase11_storage_migration_creates_required_tables`).
 - Confirm event log replay still reconstructs derived state.
 - Confirm export hash determinism is unchanged for existing fixtures.
+
+## Rollback Drill (Release Hardening Cadence)
+1. Run `make verify` and `make bundle-verify-smoke` before migration rollout.
+2. Execute migration on a copy of a populated DB.
+3. Run fixture regression check:
+   - `cargo test -p opscinema_desktop_backend phase11_fixture_ -- --nocapture`
+4. Simulate rollback with previous binary and confirm DB compatibility assumptions hold.
