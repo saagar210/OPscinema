@@ -1,0 +1,63 @@
+name: Release Hardening
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_soak:
+        description: "Run soak test as part of hardening"
+        required: false
+        default: "true"
+      soak_secs:
+        description: "Soak duration in seconds"
+        required: false
+        default: "30"
+      bundle_artifacts:
+        description: "Build macOS app/dmg bundles (requires tauri-cli)"
+        required: false
+        default: "false"
+
+jobs:
+  release-hardening:
+    runs-on: macos-latest
+    env:
+      SOAK_SECS: ${{ inputs.soak_secs }}
+      OPSCINEMA_PROVIDER_MODE: stub
+      OPSCINEMA_DETERMINISTIC_IDS: "1"
+      OPSCINEMA_CAPTURE_BURST_FRAMES: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install UI deps
+        run: npm --prefix apps/desktop/ui ci
+      - name: Release checks
+        run: |
+          if [ "${{ inputs.run_soak }}" = "true" ]; then
+            make release-final
+          else
+            make verify package bundle-verify-smoke
+          fi
+
+  bundle:
+    if: ${{ inputs.bundle_artifacts == 'true' }}
+    runs-on: macos-latest
+    env:
+      OPSCINEMA_TAURI_BUNDLES: app,dmg
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install UI deps
+        run: npm --prefix apps/desktop/ui ci
+      - name: Install tauri-cli
+        run: cargo install tauri-cli --locked
+      - name: Build app bundles
+        run: make package-bundle

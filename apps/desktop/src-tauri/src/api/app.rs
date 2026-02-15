@@ -6,12 +6,22 @@ use opscinema_types::{
     PermissionsStatus,
 };
 
+mod build_info {
+    include!(concat!(env!("OUT_DIR"), "/build_info.rs"));
+}
+
 pub fn app_get_build_info() -> AppResult<BuildInfo> {
+    let built_at = chrono::DateTime::parse_from_rfc3339(build_info::BUILD_TIMESTAMP_UTC)
+        .map(|dt| dt.with_timezone(&chrono::Utc))
+        .unwrap_or_else(|_| {
+            chrono::DateTime::<chrono::Utc>::from_timestamp(0, 0)
+                .expect("unix epoch must be constructible")
+        });
     Ok(BuildInfo {
         app_name: "OpsCinema Suite".to_string(),
         app_version: env!("CARGO_PKG_VERSION").to_string(),
-        commit: option_env!("GIT_COMMIT").unwrap_or("dev").to_string(),
-        built_at: chrono::Utc::now(),
+        commit: build_info::BUILD_GIT_COMMIT.to_string(),
+        built_at,
     })
 }
 
